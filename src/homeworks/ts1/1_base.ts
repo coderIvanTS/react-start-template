@@ -7,10 +7,10 @@ export const addPlus = (add: string): string => `+${add}`;
 
 export const removeFirstZeros = (value: string): string => value.replace(/^(-)?[0]+(-?\d+.*)$/, '$1$2');
 
-export const getBeautifulNumber = (value?: string, separator: string = ' '): string | undefined =>
+export const getBeautifulNumber = (value?: string, separator = ' '): string | undefined =>
   value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator);
 
-export const round = (value: number, accuracy: number = 2): number => {
+export const round = (value: number, accuracy = 2): number => {
   const d = 10 ** accuracy;
   return Math.round(value * d) / d;
 };
@@ -36,8 +36,9 @@ export const getContrastType = (contrastValue: number): string => (contrastValue
 export const shortColorRegExp: RegExp = /^#[0-9a-f]{3}$/i;
 export const longColorRegExp: RegExp = /^#[0-9a-f]{6}$/i;
 
-export const checkColor = (color: string): void => {
-  if (!longColorRegExp.test(color) && !shortColorRegExp.test(color)) throw new Error(`invalid hex color: ${color}`);
+export const checkColor = (color: string): void | Error => {
+  if (!longColorRegExp.test(color) && !shortColorRegExp.test(color)) 
+    throw new Error(`invalid hex color: ${color}`);
 };
 
 export const hex2rgb = (color: string): [number, number, number] => {
