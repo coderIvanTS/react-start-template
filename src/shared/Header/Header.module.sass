@@ -1,14 +1,15 @@
-@import src/app/theming/common
+@import '../ThemeProvider/ThemeProvider.css'
 
 .header
    display: flex
    flex-direction: row
-   justify-content: flex-start
+   justify-content: flex-end
+   align-items: center
    border: 1px solid gray
    border-radius: 12px
-
-.iconContainer
-   margin-left: auto
-
+   color: var(--primary-color)
+   background-color: var(--secondary-color)
+   gap: 12px
+  
 .switcher
-  +theme(color, text)
+  color: var(--primary-color)

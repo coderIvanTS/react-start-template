@@ -1,8 +1,8 @@
 import React from 'react';
-import vars from './common.scss';
-
-import { ThemeProvider } from '../../app/theming/ThemeProvider';
-import {Header} from './Header';
+import { ThemeProvider } from '../ThemeProvider/ThemeProvider';
+import { LangProvider } from '../LangProvider/LangProvider';
+import { Header } from './Header';
+import '../../i18n';
 
 export default {
     title: "UI/Header",
@@ -10,9 +10,11 @@ export default {
 }
 
 export const Default = () => {
-    return(
-        <ThemeProvider>
-            <Header/>
-        </ThemeProvider>
+    return (
+        <LangProvider>
+            <ThemeProvider>
+                <Header />
+            </ThemeProvider>
+        </LangProvider>
     )
 }
