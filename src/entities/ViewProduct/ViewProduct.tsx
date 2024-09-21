@@ -1,48 +1,69 @@
-import React, { ReactNode } from "react"
-import { FC } from "react"
+import React, { FC, useEffect, useRef } from "react";
 import s from './ViewProduct.module.sass'
 import { AddToCart } from "./components/AddToCart";
-import { DrawingIcon } from "../../shared/DrawingIcon";
+import { Category } from "../../homeworks/ts1/3_write";
 
 export interface IViewProductProps {
-    productName: string;
-    image: ReactNode;
-    cost: number;
-    describe: string;
-    nameCategory?: string;
+    name: string;
+    photo: string;
+    price: number;
+    desc?: string;
+    category?: Category;
+    isLast: boolean;
+    nextPage: () => void;
 }
 
-export const ViewProduct: FC<IViewProductProps> = ({
-    productName, image, cost, describe, nameCategory }) => {
-    return (
-        <div>
-            <div className={s.image}>
-                {image}
-            </div>
-            
-            <div className={s.containerFlexRow}>
-                <label>Наименование</label>
-                <input value={productName} />
-            </div>
+export const ViewProduct: FC<IViewProductProps> =
+    ({ name, photo, price, desc, category, isLast, nextPage }) => {
 
-            <div className={s.containerFlexRow}>
-                <label>Стоимость</label>
-                <input value={cost} />
-            </div>
+        const containerRef = useRef();
 
-            {nameCategory &&
-                <div className={s.containerFlexRow}>
-                    <label>Категория:</label>
-                    {nameCategory}
-                </div>
+        useEffect(() => {
+            if(containerRef.current){
+                const observer = new IntersectionObserver(
+                    ([entry]) => {
+                        if(isLast && entry.isIntersecting){
+                            nextPage();
+                            observer.unobserve(entry.target);
+                        }
+                })
+
+                observer.observe(containerRef.current)
             }
-            <div className={s.containerFlexRow}>
-                <label>Описание</label>
-                <textarea value={
-                    describe
-                }></textarea>
+        }, [containerRef])
+
+
+        return (
+            <div className={s.container} ref={containerRef}>
+                <div className={s.imageContainer}>
+                    <img className={s.image} src={photo} />
+                </div>
+
+                <div className={s.containerFlexColumn}>
+                    <label>Наименование</label>
+                    <input value={name} />
+                </div>
+
+                <div className={s.containerFlexColumn}>
+                    <label>Стоимость</label>
+                    <input value={price} />
+                </div>
+
+                {category &&
+                    <div className={s.containerFlexColumn}>
+                        <label>Категория:</label>
+                        {category.name}
+                    </div>
+                }
+                <div className={s.containerFlexColumn}>
+                    <label>Описание</label>
+                    <textarea value={
+                        desc
+                    }></textarea>
+                </div>
+                <div className={s.addToCartButton}>
+                    <AddToCart className={s.addToCartButton} count={0} isDisabled={true} />
+                </div>
             </div>
-            <AddToCart count={0} isDisabled={true} />
-        </div>
-    );
-}
+        );
+    }

@@ -15,10 +15,7 @@ const icons = {
 };
 
 export const ThemeSwitcher: FC<ThemeSwitcherProps> = ({ className }) => {
-  console.log('Test ' + JSON.stringify(s.button.height))
-  console.log('start theme ');
   const { theme, toggleTheme, setTheme } = useThemeContext();
-  console.log('theme ' + JSON.stringify(theme));
   
   return (
     <button className={s.button} type="button" onClick={() => { toggleTheme() }}>

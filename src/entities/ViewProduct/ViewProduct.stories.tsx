@@ -1,6 +1,6 @@
 import React from 'react';
-import { DrawingIcon } from '../../shared/DrawingIcon';
 import { ViewProduct } from './ViewProduct';
+import image from './Icons/free-icon-backhoe.png';
 
 export default {
     title: "UI/ViewProduct",
@@ -10,9 +10,9 @@ export default {
 export const Default = {
     args: {
         productName: "Тестовый товар",
-        image: <DrawingIcon />, 
+        photo: image, 
         cost: 200,
-        describe: "Мощный игровой компьютер"
+        describe: "Мощный"
     }
 }
 

@@ -1,6 +1,7 @@
 import React from "react";
 import { PropsWithChildren } from "react";
 import s from './modal.module.sass';
+import { createPortal } from "react-dom";
 
 
 export interface IModal {
@@ -11,16 +12,19 @@ export interface IModal {
 export const Modal = (props: PropsWithChildren<IModal>) => {
     if (props.isOpen) {
         return (
-            <div className={[s.modalOverlay].join(' ')}>
-                <div className={[s.modalContent].join(' ')}>
-                    <div>
-                        <button className={s.button} onClick={props.onClose} type="button">X</button>
+            createPortal(
+                <div className={[s.modalOverlay].join(' ')}>
+                    <div className={[s.modalContent].join(' ')}>
+                        <div>
+                            <button className={s.button} onClick={props.onClose} type="button">X</button>
+                        </div>
+                        <div>
+                            {props.children}
+                        </div>
                     </div>
-                    <div>
-                        {props.children}
-                    </div>
-                </div>
-            </div>
+                </div>,
+                document.body
+            )
         );
     } else {
         return (<></>);
