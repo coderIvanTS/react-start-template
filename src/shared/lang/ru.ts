@@ -2,7 +2,10 @@ export const ru = {
   translation: {
     shared: {
       header: {
-        mainPage: 'Проект',
+        mainPage: 'Основная',
+        profilePage: 'Профиль',
+        productPage: 'Магазин',
+        cartPage: 'Корзина',
       },
     },
   },

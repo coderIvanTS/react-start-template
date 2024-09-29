@@ -4,11 +4,7 @@ import { ViewProduct } from "../ViewProduct/ViewProduct";
 import s from './ViewProductList.module.sass';
 import { getProductsApi } from "./api/request";
 
-export interface IViewProductListProps {
-    products: Product[];
-}
-
-export const ViewProductList: FC<IViewProductListProps> = () => {
+export const ViewProductList = () => {
     const [productList, setProductList] = useState<Product[]>([]);
 
     useEffect(() => {

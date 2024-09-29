@@ -1,7 +1,7 @@
-import drill from './Icons/free-icon-construction-drill.png'
-import crane from './Icons/free-icon-crane-truck.png'
-import truck from './Icons/free-icon-dump-truck.png'
-import excavator from './Icons/free-icon-excavator.png'
+import drill from '../../asserts/Icons/free-icon-construction-drill.png'
+import crane from '../../asserts/Icons/free-icon-crane-truck.png'
+import truck from '../../asserts/Icons/free-icon-dump-truck.png'
+import excavator from '../../asserts/Icons/free-icon-excavator.png'
 
 
 /**
@@ -106,7 +106,7 @@ const testCategories: Category[] = [
 
 
 const photos: string[] = [
-    drill, crane, truck, excavator
+     drill, crane, truck, excavator
 ]
 
 /**

@@ -1,6 +1,6 @@
 :root{
-    --primary-color: rgb(25, 0, 255);
-    --secondary-color: rgb(54, 151, 136);
+    --primary-color: rgb(0, 255, 68);
+    --secondary-color: rgb(239, 247, 127);
 }
 
 .dark-theme{
