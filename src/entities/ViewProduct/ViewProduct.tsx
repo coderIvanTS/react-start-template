@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import s from './ViewProduct.module.sass'
-import { AddToCart } from "./components/AddToCart";
 import { Category } from "../../homeworks/ts1/3_write";
 import { GroupCollapse } from "../../shared/GroupCollapse";
+import { AddToCart } from "../../shared/AddToCart";
 
 export interface IViewProductProps {
     name: string;
@@ -17,8 +17,10 @@ export interface IViewProductProps {
 export const ViewProduct: FC<IViewProductProps> =
     ({ name, photo, price, desc, category, isLast, nextPage }) => {
 
+        const imageRef = useRef();
         const containerRef = useRef();
-        const [isGroupOpen, setIsGroupOpen] = useState(false)
+        const [isGroupOpen, setIsGroupOpen] = useState(false);
+        const [countInCart, setCountInCart] = useState(0);
 
         useEffect(() => {
             if (containerRef.current) {
@@ -38,7 +40,7 @@ export const ViewProduct: FC<IViewProductProps> =
         return (
             <div className={s.container} ref={containerRef}>
                 <div className={s.imageContainer}>
-                    <img className={s.image} src={photo} />
+                    <img ref={imageRef} className={s.image} src={photo} />
                 </div>
 
                 <div className={s.containerFlexColumn}>
@@ -46,7 +48,7 @@ export const ViewProduct: FC<IViewProductProps> =
                     <input value={name} />
                 </div>
 
-                <GroupCollapse 
+                <GroupCollapse
                     className={s.groupCollapse}
                     title="Подробнее"
                     isOpen={isGroupOpen}
@@ -73,7 +75,15 @@ export const ViewProduct: FC<IViewProductProps> =
 
                 </GroupCollapse>
                 <div className={s.addToCartButton}>
-                    <AddToCart className={s.addToCartButton} count={0} isDisabled={true} />
+                    <AddToCart
+                        className={s.addToCartButton}
+                        count={countInCart}
+                        isDisabled={false}
+                        photo={photo}
+                        imageRef={imageRef}
+                        onAddToCart={() => { setCountInCart(prev => prev + 1) } }
+                        onDellFromCart={() => { setCountInCart(prev => prev - 1) }}
+                    />
                 </div>
             </div >
         );
