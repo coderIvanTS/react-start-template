@@ -3,17 +3,26 @@ import { Product } from "../../homeworks/ts1/3_write";
 import { ViewProduct } from "../ViewProduct/ViewProduct";
 import s from './ViewProductList.module.sass';
 import { getProductsApi } from "./api/request";
+import { useAppSelector } from "../../store/hooks";
+import { useDispatch } from "react-redux";
+import { addToShop } from "../../store/slices/productSlice";
 
-export const ViewProductList = () => {
-    const [productList, setProductList] = useState<Product[]>([]);
+interface IViewProductListProps {
+    isEditMode: boolean;
+}
+
+export const ViewProductList = ({isEditMode}: IViewProductListProps) => {
+    const productList = useAppSelector(state => state.productSlice.productList);
+    const dispatcher = useDispatch();
 
     useEffect(() => {
-        setProductList(getProductsApi())
+        const newProducts = getProductsApi();
+        newProducts.forEach(p => dispatcher(addToShop(p)));
     }, []);
 
     const handleNextPage = () => {
         const newProducts = getProductsApi();
-        setProductList(prev => [...prev, ...newProducts])
+        newProducts.forEach(p => dispatcher(addToShop(p)));
     }
 
     return (
@@ -21,9 +30,10 @@ export const ViewProductList = () => {
             {
                 productList.map((p, index) =>
                     <ViewProduct
-                        {...p}
+                        product={p}
                         key={p.id}
                         isLast={index === productList.length - 1}
+                        isEditMode={isEditMode}
                         nextPage={handleNextPage}
                     />)
             }

@@ -6,6 +6,7 @@ export const en = {
         profilePage: 'Profile',
         productPage: 'Shop',
         cartPage: 'Cart',
+        editProduct: 'Edit',
       },
     },
   },

@@ -2,11 +2,11 @@ import React from "react"
 import { Layout } from "../../shared/Layout"
 import { ViewProductList } from "../../entities/ViewProductList"
 
-export const ProductPage = () => {
+export const AdminEditProductPage = () => {
 
     return (
         <Layout>
-            <ViewProductList isEditMode={false} />
+            <ViewProductList isEditMode={true} />
         </Layout>
     )
 }

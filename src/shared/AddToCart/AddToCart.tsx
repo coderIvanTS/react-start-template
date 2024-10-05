@@ -48,7 +48,7 @@ export const AddToCart = ({ count, isDisabled, photo, imageRef, className, onAdd
             onAddToCart();
         }
     }
-
+ 
     useLayoutEffect(() => {
         if (refAddToCart.current) {
             refAddToCart.current.addEventListener('transitionend', handleAnimationEnd)

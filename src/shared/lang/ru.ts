@@ -6,6 +6,7 @@ export const ru = {
         profilePage: 'Профиль',
         productPage: 'Магазин',
         cartPage: 'Корзина',
+        editProduct: 'Редактировать',
       },
     },
   },
