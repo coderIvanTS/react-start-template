@@ -19,7 +19,7 @@ export const Header = () => {
 
 
         <div className={s.header}>
-            <div className={s.headerLoginInfoContainer} >
+            {/* <div className={s.headerLoginInfoContainer} >
                 {userName ?
                     <div className={s.containerDivRow}>
                         {`Добро пожаловать: ${userName}`}
@@ -57,6 +57,14 @@ export const Header = () => {
 
             <NavLink style={({ isActive }) => { return isActive ? { color: "blue" } : {} }} to="/product_edit_admin">
                 {t('shared.header.editProduct')}
+            </NavLink > */}
+
+            <NavLink style={({ isActive }) => { return isActive ? { color: "blue" } : {} }} to="/register_func">
+                {t('shared.header.registerFuncPage')}
+            </NavLink >
+
+            <NavLink style={({ isActive }) => { return isActive ? { color: "blue" } : {} }} to="/register_saga">
+                {t('shared.header.registerSagaPage')}
             </NavLink >
 
             <LangSwitcher />
