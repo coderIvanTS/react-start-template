@@ -1,21 +1,22 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import s from './ViewProduct.module.sass'
-import { Product } from "../../homeworks/ts1/3_write";
 import { GroupCollapse } from "../../shared/GroupCollapse";
 import { AddToCart } from "../../shared/AddToCart";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, dellFromCart, getCountInCartById, TProductInCartWithCount } from "../../store/slices/productInCartSlice";
 import { useAppSelector } from "../../store/hooks";
 import { useForm } from "react-hook-form";
+import { Product, TUpdateProductParams } from "../ViewProductList/model/types/types";
 
 export interface IViewProductProps {
     product: Product;
     isLast: boolean;
     isEditMode: boolean;
+    onSaveChanges: (product: TUpdateProductParams) => void;
     nextPage: () => void;
 }
 
-export const ViewProduct: FC<IViewProductProps> = ({ product, isLast, isEditMode, nextPage }) => {
+export const ViewProduct: FC<IViewProductProps> = ({ product, isLast, isEditMode, onSaveChanges, nextPage }) => {
     const dispatch = useDispatch();
     const productListInCart = useAppSelector(state => state.productInCartSlice.productList);
     const countInCart = getCountInCartById(productListInCart, product.id);
@@ -44,7 +45,17 @@ export const ViewProduct: FC<IViewProductProps> = ({ product, isLast, isEditMode
 
     return (
         <form onSubmit={handleSubmit((data) => {
-            console.log('data: ' + JSON.stringify(data));
+
+            const updateProduct : TUpdateProductParams = {
+                id: data.id,
+                name: data.name,
+                createdAt: data.createdAt,
+                updatedAt: data.updatedAt,
+                price: data.price,
+                commandId: data.commandId,
+                categoryId: data.category.id
+            }
+            onSaveChanges(updateProduct);
         })
         }
         >
@@ -88,7 +99,7 @@ export const ViewProduct: FC<IViewProductProps> = ({ product, isLast, isEditMode
                 </GroupCollapse>
 
                 {isEditMode ?
-                    <button type="submit" >Сохранить</button>
+                    <button type="submit" >Сохранить изменения</button>
                     :
                     <div className={s.addToCartButton}>
                         <AddToCart

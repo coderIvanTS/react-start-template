@@ -3,7 +3,7 @@ export const ru = {
     shared: {
       header: {
         registerFuncPage: 'Регистрация (отправка запросов в функциональном компоненте)', 
-        registerSagaPage: 'Регистрация (отправка запроса через SAGA)', 
+        registerSagaPage: 'Регистрация', 
         mainPage: 'Основная',
         profilePage: 'Профиль',
         productPage: 'Магазин',

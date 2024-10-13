@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { profileRegister } from "../../store/slices/authAndProfile";
 import { useAppSelector } from "../../store/hooks";
 import { Layout } from "../../shared/Layout";
+import { NavLink } from "react-router-dom";
 
 export const RegisterSagaPage = () => {
     const isLoading = useAppSelector(state => state.authAndProfile.loading.isLoading);
@@ -20,13 +21,13 @@ export const RegisterSagaPage = () => {
     });
 
     const onConfirm = (email: string, password: string) => {
-        dispatcher(profileRegister({ email, password }));
+        dispatcher(profileRegister({isNewUser: true, email, password }));
     }
 
     return (
         <Layout>
-            <form onSubmit={handleSubmit((data) => { onConfirm(data.email, data.password) })}>
-                <div>{'Регистрация нового пользователя (отправка запроса в SAGA эффектах)'}</div>
+            <form className={s.formContainerColumn} onSubmit={handleSubmit((data) => { onConfirm(data.email, data.password) })}>
+                <div>{'Регистрация нового пользователя'}</div>
                 {isLoading &&
                     <div>{'Идет регистрация'}</div>
                 }
@@ -36,9 +37,9 @@ export const RegisterSagaPage = () => {
                     </div>
                 }
 
-                {profile.userName &&
+                {profile.name &&
                     <div className={s.successMessage}>
-                        {`Регистрация пользователя ${profile.userName} прошла успешно.`}
+                        {`Регистрация пользователя ${profile.name} прошла успешно.`}
                     </div>
                 }
 
@@ -47,9 +48,13 @@ export const RegisterSagaPage = () => {
                 <div>{'Пароль:'}</div>
                 <input {...register('password')} type="password" ></input>
 
-                <div>
+                <div className={s.button}>
                     <button type="submit">Зарегистрироваться</button>
                 </div>
+
+                <NavLink to="/login">
+                    {'Я уже зарегистрирован'}
+                </NavLink >
             </form >
         </Layout>
     )

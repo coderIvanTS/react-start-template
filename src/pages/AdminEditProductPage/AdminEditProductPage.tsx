@@ -5,8 +5,11 @@ import { ViewProductList } from "../../entities/ViewProductList"
 export const AdminEditProductPage = () => {
 
     return (
-        <Layout>
+        <Layout>         
+            
             <ViewProductList isEditMode={true} />
+
+            
         </Layout>
     )
 }

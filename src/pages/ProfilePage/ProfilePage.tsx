@@ -1,39 +1,76 @@
-import React from "react"
+import React, { useState } from "react"
 import { Layout } from "../../shared/Layout"
 import { useAppSelector } from "../../store/hooks"
 import s from './ProfilePage.module.sass'
+import { useForm } from "react-hook-form"
+import { postProfileApi } from "../../entities/Register/api/request"
+import { isTErrorResponse, TServerError } from "../../shared/fetchHelpers/typeGuards"
 
 export const ProfilePage = () => {
-    const profile = useAppSelector(state => state.authAndProfile.profile)
+    const profile = useAppSelector(state => state.authAndProfile.profile);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
+
+    const { register, handleSubmit } = useForm({
+        defaultValues: { ...profile }
+    });
 
     return (
         <Layout>
-            <div className={s.containerColumn}>
-                <div>
-                    Профиль пользователя
-                </div>
+            <form onSubmit={handleSubmit((data) => {
 
-                <div className={s.containerRow}>
-                    <div>Логин:</div>
-                    {profile.userName}
-                </div>
+                postProfileApi(data)
+                    .then((response) => {
+                        setSuccessMessage('Профиль сохранен')
+                    })
+                    .catch((error: unknown) => {
+                        if (isTErrorResponse(error)) {
+                            let allErrors = "";
+                            error.response.data.errors.forEach((e: TServerError) => allErrors += e.message)
+                            setErrorMessage(allErrors)
+                        } else {
+                            //unknownError
+                        }
+                    });
 
-                <div className={s.containerRow}>
-                    <div>Адрес:</div>
-                    {profile.address}
-                </div>
+            })}>
+                <div className={s.containerColumn}>
+                    <div>
+                        Профиль пользователя
+                    </div>
 
-                <div className={s.containerRow}>
-                    <div>Телефон:</div>
-                    {profile.phone}
-                </div>
+                    {errorMessage &&
+                        <div>{errorMessage}</div>
+                    }
+                    {successMessage &&
+                        <div>{successMessage}</div>
+                    }
 
-                <div className={s.containerRow}>
+
+                    <div className={s.containerRow}>
+                        <div>Имя:</div>
+                        <input {...register('name')} />
+                    </div>
+
+                    <div className={s.containerRow}>
+                        <div>Почта:</div>
+                        <input {...register('email')} />
+                    </div>
+
+                    <div className={s.containerRow}>
+                        <div>Дата регистрации:</div>
+                        <input {...register('signUpDate')} disabled={true} />
+                    </div>
+
+                    {/* <div className={s.containerRow}>
                     <div>Роль в системе:</div>
                     {profile.role}
+                </div> */}
+
                 </div>
 
-            </div>
-        </Layout>
+                <button type="submit">Сохранить</button>
+            </form>
+        </Layout >
     )
 }

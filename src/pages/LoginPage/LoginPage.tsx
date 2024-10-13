@@ -1,73 +1,60 @@
 import React, { useState } from "react"
 import { useForm } from "react-hook-form";
-import { useAppDispatch } from "../../store/hooks";
-import { saveProfile, saveToken } from "../../store/slices/authAndProfile";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { profileRegister, saveProfile, saveToken } from "../../store/slices/authAndProfile";
 import s from './LoginPage.module.sass';
-import { v4 as uuidv4 } from 'uuid';
-import { useNavigate  } from 'react-router-dom';
-
-type TUser = {
-    name: string;
-    pass: string;
-    address: string;
-    phone: string;
-    role: string;
-}
-
-const users: TUser[] = [
-    { name: "user", pass: "123", address: "Краснодар, ул. Красная", phone: "", role: "USER" },
-    { name: "admin", pass: "456", address: "Москва, Красная площадь", phone: "", role: "ADMIN" },
-]
+import { NavLink, useNavigate } from 'react-router-dom';
+import { Layout } from "../../shared/Layout";
 
 export const LoginPage = () => {
-    const [error, setError] = useState("")
-    const { register, handleSubmit } = useForm();
-    const dispatch = useAppDispatch();
-    const navigate = useNavigate ();
+    const token = useAppSelector(state => state.authAndProfile.auth.token);
+    const error = useAppSelector(state => state.authAndProfile.error);
+    const dispatcher = useAppDispatch();
+    const navigate = useNavigate();
+    const { register, handleSubmit } = useForm({
+        defaultValues: { email: "", password: "" },
+    });
+
+    const onConfirm = (email: string, password: string) => {
+        dispatcher(profileRegister({ isNewUser: false, email, password }));
+    }
 
     return (
-        <form className={s.formContainerColumn} onSubmit={handleSubmit((data) => {
-            const found = users.find(u => u.name.toUpperCase() == data.userName.toUpperCase() 
-                && u.pass == data.password);
-            if (found) {
-                dispatch(saveToken(uuidv4()))
-                dispatch(saveProfile({
-                    userName: found.name,
-                    address: found.address,
-                    phone: found.phone,
-                    role: found.role,
-                },))
+        <Layout>
+            <form className={s.formContainerColumn} onSubmit={handleSubmit((data) => {
+                onConfirm(data.email, data.password)
+            })}>
+                <div>
+                    Введите почту и пароль
+                </div>
 
-                navigate("/profile")
-            }else{
-                setError("Ошибка входа")
-            }
-        })}>
-            <div>
-                Авторизация
-            </div>
+                {token &&
+                    <div className={s.success}>
+                        {'Успешный вход'}
+                    </div>}
+                {error.isError &&
+                    <div className={s.error}>
+                        {error.errorMessage}
+                    </div>
+                }
 
-            <div className={s.error}>
-                {error}
-            </div>
-            <div>
-                (имя: user, пароль: 123 )
-            </div>
-            <div>
-                (имя: admin, пароль: 456 )
-            </div>
+                <div className={s.containerColumn}>
+                    <label>Почта:</label>
+                    <input {...register('email')} />
+                </div>
 
-            <div className={s.containerColumn}>
-                <label>Имя:</label>
-                <input {...register('userName')} />
-            </div>
+                <div className={s.containerColumn}>
+                    <label>Пароль:</label>
+                    <input {...register('password')} type="password" />
+                </div>
 
-            <div className={s.containerColumn}>
-                <label>Пароль:</label>
-                <input {...register('password')} type="password" />
-            </div>
+                <button className={s.button} type="submit">Войти</button>
 
-            <button className={s.button} type="submit">Войти</button>
-        </form>
+                <NavLink to="/register_saga">
+                    {'Я новый пользователь'}
+                </NavLink >
+            </form>
+
+        </Layout>
     )
 }

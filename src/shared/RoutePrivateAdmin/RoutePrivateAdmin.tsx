@@ -8,10 +8,9 @@ export interface IRoutePrivateProps {
 
 export const RoutePrivateAdmin = ({ children }: IRoutePrivateProps) => {
     const token = useAppSelector(state => state.authAndProfile.auth.token)
-    const userRole = useAppSelector(state => state.authAndProfile.profile.role)
 
-    if(userRole != "ADMIN"){
-        return <Navigate to="/access_denied_page" replace />;
+    if(!token){
+     return <Navigate to="/access_denied_page" replace />;
     }
 
     return children;

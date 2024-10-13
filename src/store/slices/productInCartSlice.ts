@@ -1,5 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Product } from "../../homeworks/ts1/3_write";
+import { Product } from "../../entities/ViewProductList/model/types/types";
 
 export type TProductInCartWithCount = Product & { count: number }
 

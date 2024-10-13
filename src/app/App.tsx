@@ -16,7 +16,6 @@ import { appInitiated } from '../store/slices/authAndProfile';
 import { RoutePrivateAdmin } from '../shared/RoutePrivateAdmin/RoutePrivateAdmin';
 import { AdminEditProductPage } from '../pages/AdminEditProductPage/AdminEditProductPage';
 import { AccessDeniedPage } from '../pages/AccessDeniedPage/AccessDeniedPage';
-import { RegisterFuncPage } from '../pages/RegisterFuncPage/RegisterFuncPage';
 import { RegisterSagaPage } from '../pages/RegisterSagaPage/RegisterSagaPage';
 
 function App() {
@@ -33,7 +32,6 @@ function App() {
           <Routes>
             <Route path='*' element={<NotFoundPage />} />
 
-            <Route path='register_func' element={<RegisterFuncPage />} />
             <Route path='register_saga' element={<RegisterSagaPage />} />
 
             <Route path='login' element={<LoginPage />} />

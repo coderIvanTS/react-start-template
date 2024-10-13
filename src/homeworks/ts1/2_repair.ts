@@ -6,7 +6,6 @@
 export const getFakeApi = async (): Promise<void> => {
     const result = await fetch('https://jsonplaceholder.typicode.com/todos/1')
         .then((response) => response.json());
-    console.log(result);
 };
 
 // Мы это не проходили, но по тексту ошибки можно понять, как это починить

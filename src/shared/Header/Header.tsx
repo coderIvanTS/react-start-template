@@ -11,7 +11,7 @@ import { logOut } from "../../store/slices/authAndProfile";
 
 export const Header = () => {
     const dispatch = useDispatch();
-    const userName = useAppSelector(state => state.authAndProfile.profile.userName);
+    const email = useAppSelector(state => state.authAndProfile.profile.email);
     const { t } = useTranslation();
     const navigate = useNavigate();
 
@@ -19,10 +19,10 @@ export const Header = () => {
 
 
         <div className={s.header}>
-            {/* <div className={s.headerLoginInfoContainer} >
-                {userName ?
+            <div className={s.headerLoginInfoContainer} >
+                {email ?
                     <div className={s.containerDivRow}>
-                        {`Добро пожаловать: ${userName}`}
+                        {`Добро пожаловать: ${email}`}
                         <button type="button" 
                         onClick={() => {
                             dispatch(logOut());
@@ -57,10 +57,6 @@ export const Header = () => {
 
             <NavLink style={({ isActive }) => { return isActive ? { color: "blue" } : {} }} to="/product_edit_admin">
                 {t('shared.header.editProduct')}
-            </NavLink > */}
-
-            <NavLink style={({ isActive }) => { return isActive ? { color: "blue" } : {} }} to="/register_func">
-                {t('shared.header.registerFuncPage')}
             </NavLink >
 
             <NavLink style={({ isActive }) => { return isActive ? { color: "blue" } : {} }} to="/register_saga">

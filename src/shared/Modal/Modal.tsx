@@ -23,7 +23,7 @@ export const Modal = (props: PropsWithChildren<IModal>) => {
                         </div>
                     </div>
                 </div>,
-                document.body
+                document.getElementById("root")
             )
         );
     } else {
