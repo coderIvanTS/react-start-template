@@ -39,7 +39,7 @@ export type TProductRaw = {
 }
 
 // Добавление нового товара
-export type TAddProductParams = {
+export interface TAddProductParams {
     name: string;
     photo?: string;
     desc?: string;
@@ -47,6 +47,8 @@ export type TAddProductParams = {
     price: number;
     categoryId: string;
 };
+
+
 
 // Обновление существующего товара
 export type TUpdateProductParams = {

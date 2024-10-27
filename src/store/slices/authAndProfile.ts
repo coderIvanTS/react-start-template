@@ -1,12 +1,5 @@
-import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { act } from "react";
-import { getProfileApi, postRegisterApi, postSigninApi } from "../../entities/Register/api/request";
-import { isTRegisterProfile } from "../../shared/fetchHelpers/registerTypeGuards";
-import { isTErrorResponse, TServerError } from "../../shared/fetchHelpers/typeGuards";
-import { put } from 'redux-saga/effects';
-import { isTProfile, TProfile } from "../../shared/profileTypes/profileTypes";
-import { parseISO } from "date-fns";
-import { COMAND_ID } from "../../shared/fetchHelpers/fetchSettings";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { TProfile } from "../../shared/profileTypes/profileTypes";
 
 type TAppStarted = {
     isAppInitiated: boolean;
@@ -20,6 +13,10 @@ type TLoad = {
     isLoading: boolean;
 }
 
+type TUpdate = {
+    isUpdating: boolean;
+}
+
 type TError = {
     isError: boolean;
     errorMessage: string;
@@ -30,6 +27,7 @@ type TAuthAndProfile = {
     auth: TAuth;
     profile: TProfile;
     loading: TLoad;
+    updating: TUpdate;
     error: TError;
 };
 
@@ -44,6 +42,7 @@ const initialState: TAuthAndProfile = {
         commandId: "",
     },
     loading: { isLoading: false },
+    updating: { isUpdating: false },
     error: { isError: false, errorMessage: "" }
 }
 
@@ -86,50 +85,3 @@ const authAndProfileSlice = createSlice(
 export default authAndProfileSlice.reducer;
 export const { appInitiated, saveToken, saveProfile, logOut, setIsLoading, setError } = authAndProfileSlice.actions;
 
-
-// Saga Effects
-export function* doProfileRegisterSaga(data: { type: string, payload: { isNewUser: boolean, email: string, password: string } }): any {
-    const unknownError = 'Не известная ошибка';
-    try {
-        yield put(setError({ isError: false, errorMessage: "" }));
-        yield put(setIsLoading(true));
-
-        let response = undefined;
-        if (data.payload.isNewUser) {
-            response = yield postRegisterApi(data.payload.email, data.payload.password);
-        } else {
-            response = yield postSigninApi(data.payload.email, data.payload.password);
-        }
-
-        if (isTRegisterProfile(response)) {
-            yield put(saveToken(response.token));
-            // Получаем данные профиля
-            const profile = yield getProfileApi();
-
-            if (isTProfile(profile)) {
-                const newProfile: TProfile = {
-                    ...profile, commandId: COMAND_ID
-                }
-                yield put(saveProfile(newProfile));
-            }
-        } else {
-            throw (unknownError);
-        }
-
-    } catch (error: unknown) {
-        if (isTErrorResponse(error)) {
-            let allErrors = "";
-            error.response.data.errors.forEach((e: TServerError) => allErrors += e.message)
-
-            yield put(setError({ isError: true, errorMessage: allErrors }))
-        } else {
-            yield put(setError({ isError: true, errorMessage: unknownError }))
-        }
-    } finally {
-        yield put(setIsLoading(false));
-    }
-
-}
-
-export const PROFILE_REGISTER = 'authAndProfile/doRegister';
-export const profileRegister = createAction<{ isNewUser: boolean, email: string, password: string }>(PROFILE_REGISTER);

@@ -12,22 +12,21 @@ import { logOut } from "../../store/slices/authAndProfile";
 export const Header = () => {
     const dispatch = useDispatch();
     const email = useAppSelector(state => state.authAndProfile.profile.email);
+    const token = useAppSelector(state => state.authAndProfile.auth.token);
     const { t } = useTranslation();
     const navigate = useNavigate();
 
     return (
-
-
         <div className={s.header}>
             <div className={s.headerLoginInfoContainer} >
                 {email ?
                     <div className={s.containerDivRow}>
                         {`Добро пожаловать: ${email}`}
-                        <button type="button" 
-                        onClick={() => {
-                            dispatch(logOut());
-                            navigate('/');
-                        }}
+                        <button type="button"
+                            onClick={() => {
+                                dispatch(logOut());
+                                navigate('/');
+                            }}
                         >{'Выйти'}</button>
                     </div>
                     :
@@ -35,15 +34,10 @@ export const Header = () => {
                         {'Добро пожаловать: Гость'}
                         <button type="button" onClick={() => navigate('/profile')} >{'Войти'}</button>
                     </div>
-
                 }
             </div>
 
             <NavLink style={({ isActive }) => { return isActive ? { color: "blue" } : {} }} to="/">
-                {t('shared.header.mainPage')}
-            </NavLink >
-
-            <NavLink style={({ isActive }) => { return isActive ? { color: "blue" } : {} }} to="/product">
                 {t('shared.header.productPage')}
             </NavLink >
 
@@ -59,9 +53,11 @@ export const Header = () => {
                 {t('shared.header.editProduct')}
             </NavLink >
 
-            <NavLink style={({ isActive }) => { return isActive ? { color: "blue" } : {} }} to="/register_saga">
-                {t('shared.header.registerSagaPage')}
-            </NavLink >
+            {token == '' &&
+                <NavLink style={({ isActive }) => { return isActive ? { color: "blue" } : {} }} to="/register_saga">
+                    {t('shared.header.registerSagaPage')}
+                </NavLink >
+            }
 
             <LangSwitcher />
             <div>

@@ -65,7 +65,7 @@ export const CategoryModal = ({ isOpen, onConfirm, onClose }: ICategoryModalProp
 
                             <select onChange={handleChangeCategory}>
                                 {
-                                    categoryList.map((c: Category) => <option value={c.id} >{c.name}</option>)
+                                    categoryList.map((c: Category) => <option key={c.id} value={c.id} >{c.name}</option>)
                                 }
                             </select>
                             <button type="button" onClick={handleDellCategory} disabled={categoryList ? false : true}>Удалить выбранную</button>

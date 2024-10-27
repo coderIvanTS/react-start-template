@@ -1,24 +1,21 @@
-import React, { FC, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { ViewProduct } from "../ViewProduct/ViewProduct";
 import s from './ViewProductList.module.sass';
-import { addProductApi, getProductsApi, putProductApi } from "./api/request";
-import { useAppSelector } from "../../store/hooks";
-import { useDispatch } from "react-redux";
-import { addToShop } from "../../store/slices/productSlice";
-import { Category, Product, Sorting, TAddProductParams, TUpdateProductParams } from "./model/types/types";
+import { putProductApi } from "./api/request";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { Category, TUpdateProductParams } from "./model/types/types";
 import { AddProductModal } from "./ui/AddProductModal/AddProductModal";
 import { CategoryModal } from "./ui/CategoryModal";
+import { productGet } from "../../store/slices/saga/getProductSaga";
 
 interface IViewProductListProps {
     isEditMode: boolean;
 }
 
 export const ViewProductList = ({ isEditMode }: IViewProductListProps) => {
-    const MAX_ON_PAGE = 10;
-    const sort: Sorting = { type: 'ASC', field: 'id' };
-
-    const [pageNumber, setPageNumber] = useState<number>(1);
-    const [productList, setProductList] = useState<Product[]>([]);
+    const dispatcher = useAppDispatch();
+    const productList = useAppSelector(state => state.productSlice.productList);
+    const pagination = useAppSelector(state => state.productSlice.pagination);
 
     // Модальное окно - добавления товара
     const [isOpenAddProductModal, setIsOpenAddProductModal] = useState(false);
@@ -28,25 +25,24 @@ export const ViewProductList = ({ isEditMode }: IViewProductListProps) => {
     const [selectedCategory, setSelectedCategory] = useState<Category>()
 
     useEffect(() => {
-
-        const init = async () => {
-            const response = await getProductsApi(MAX_ON_PAGE, pageNumber, sort);
-            if(response.data){
-                setProductList(response.data)
+        dispatcher(productGet(
+            {
+                pageSize: pagination.maxOnPage,
+                pageNumber: pagination.currentPage,
+                sorting: pagination.sort,
             }
-        }
-
-        init();
+        ));
     }, []);
 
     const handleNextPage = async () => {
+        // TODO
 
-        const response = await getProductsApi(MAX_ON_PAGE, pageNumber + 1, sort);
-        if(response.data){
-            setProductList(prev => prev.concat(...response.data))
-        }
+        // const response = await getProductsApi(MAX_ON_PAGE, pageNumber + 1, sort);
+        // if(response.data){
+        //     setProductList(prev => prev.concat(...response.data))
+        // }
 
-        setPageNumber(prev => prev + 1);
+        // setPageNumber(prev => prev + 1);
     }
 
     const handleAddProduct = () => {
@@ -72,15 +68,16 @@ export const ViewProductList = ({ isEditMode }: IViewProductListProps) => {
                 </button>
             }
             {
-                productList.map((p, index) =>
+                productList.map((p, index) => 
                     <ViewProduct
                         product={p}
-                        key={p.id}
+                        key={p.id + index}
                         isLast={index === productList.length - 1}
                         isEditMode={isEditMode}
                         onSaveChanges={handleSaveChanges}
                         nextPage={handleNextPage}
-                    />)
+                    />
+                )
             }
 
             {/* Модальное окно - добавления товара */}

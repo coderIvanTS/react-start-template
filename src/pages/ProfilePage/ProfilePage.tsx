@@ -1,51 +1,49 @@
-import React, { useState } from "react"
+import React, { useEffect } from "react"
 import { Layout } from "../../shared/Layout"
-import { useAppSelector } from "../../store/hooks"
+import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import s from './ProfilePage.module.sass'
-import { useForm } from "react-hook-form"
-import { postProfileApi } from "../../entities/Register/api/request"
-import { isTErrorResponse, TServerError } from "../../shared/fetchHelpers/typeGuards"
+import { Form, SubmitHandler, useForm } from "react-hook-form"
+import { profileUpdate } from "../../store/slices/saga/profileUpdateSaga"
+import { TProfile } from "../../shared/profileTypes/profileTypes"
 
 export const ProfilePage = () => {
+    const dispatcher = useAppDispatch();
     const profile = useAppSelector(state => state.authAndProfile.profile);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
+    const isUpdating = useAppSelector(state => state.authAndProfile.updating.isUpdating);
+    const error = useAppSelector(state => state.authAndProfile.error);
 
-    const { register, handleSubmit } = useForm({
-        defaultValues: { ...profile }
+    const { register, handleSubmit, reset } = useForm<TProfile>({
+        defaultValues: { ...profile },
     });
+
+    useEffect(() => {
+        reset({ ...profile })
+    }, [profile])
+
+    const onSubmit: SubmitHandler<TProfile> = (data) => {
+        dispatcher(profileUpdate(data));
+    }
+
+    if (profile.email == undefined || profile.email == '') {
+        return (
+            <div>{'Ожидайте. Загрузка'}</div>
+        )
+    }
 
     return (
         <Layout>
-            <form onSubmit={handleSubmit((data) => {
-
-                postProfileApi(data)
-                    .then((response) => {
-                        setSuccessMessage('Профиль сохранен')
-                    })
-                    .catch((error: unknown) => {
-                        if (isTErrorResponse(error)) {
-                            let allErrors = "";
-                            error.response.data.errors.forEach((e: TServerError) => allErrors += e.message)
-                            setErrorMessage(allErrors)
-                        } else {
-                            //unknownError
-                        }
-                    });
-
-            })}>
+            <form onSubmit={handleSubmit(onSubmit)} >
                 <div className={s.containerColumn}>
                     <div>
                         Профиль пользователя
                     </div>
 
-                    {errorMessage &&
-                        <div>{errorMessage}</div>
+                    {error.isError &&
+                        <div className={s.red} >{error.errorMessage}</div>
                     }
-                    {successMessage &&
-                        <div>{successMessage}</div>
+                    {isUpdating &&
+                        <div>{'Обновление профиля...'}</div>
                     }
-
 
                     <div className={s.containerRow}>
                         <div>Имя:</div>
@@ -54,7 +52,7 @@ export const ProfilePage = () => {
 
                     <div className={s.containerRow}>
                         <div>Почта:</div>
-                        <input {...register('email')} />
+                        <input {...register('email')} readOnly={true}/>
                     </div>
 
                     <div className={s.containerRow}>
@@ -62,15 +60,10 @@ export const ProfilePage = () => {
                         <input {...register('signUpDate')} disabled={true} />
                     </div>
 
-                    {/* <div className={s.containerRow}>
-                    <div>Роль в системе:</div>
-                    {profile.role}
-                </div> */}
-
                 </div>
 
                 <button type="submit">Сохранить</button>
-            </form>
+            </form >
         </Layout >
     )
 }

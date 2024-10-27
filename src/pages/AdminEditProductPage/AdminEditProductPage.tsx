@@ -6,10 +6,7 @@ export const AdminEditProductPage = () => {
 
     return (
         <Layout>         
-            
             <ViewProductList isEditMode={true} />
-
-            
         </Layout>
     )
 }

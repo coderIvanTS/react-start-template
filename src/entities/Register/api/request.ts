@@ -38,7 +38,6 @@ export const postSigninApi = async (email: string, password: string) => {
 // Получить данные профиля
 export const getProfileApi = async () => {
    const res = await axiosInstance.get('/profile');
-
    return res.data;
 }
 

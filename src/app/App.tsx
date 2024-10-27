@@ -35,8 +35,7 @@ function App() {
             <Route path='register_saga' element={<RegisterSagaPage />} />
 
             <Route path='login' element={<LoginPage />} />
-            <Route path={"/"} element={<MainPage />} />
-            <Route path={"product"} element={<ProductPage />} />
+            <Route path={"/"} element={<ProductPage />} />
             <Route path={"product_edit_admin"} element={
               <RoutePrivateAdmin>
                 <AdminEditProductPage />
