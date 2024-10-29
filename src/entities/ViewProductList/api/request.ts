@@ -48,3 +48,7 @@ export const addProductApi = async (param: TAddProductParams) => {
 export const putProductApi = async( product: TUpdateProductParams) => {
   const response = await axiosInstance.put(`/products/${product.id}`, product);
 }
+
+export const deleteProductApi = async( id: string) => {
+  const response = await axiosInstance.delete(`/products/${id}`);
+}

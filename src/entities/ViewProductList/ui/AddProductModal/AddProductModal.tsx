@@ -7,6 +7,9 @@ import { LabelWrapper } from "../../../../shared/LabelWrapper";
 import { z } from 'zod';
 import s from './AddProductModal.modal.sass';
 import { zodResolver } from '@hookform/resolvers/zod';
+import axiosInstance from "../../../../shared/axiosHelper/axiosHelper";
+import { useAppDispatch } from "../../../../store/hooks";
+import { productAdd } from "../../../../store/slices/saga/addProductSaga";
 
 const schema = z.object({
     name: z.string().min(3, { message: 'Минимальная длина имени товара 3 символа' }),
@@ -28,6 +31,8 @@ export interface IAddProductModalProps {
 }
 
 export const AddProductModal = ({ isOpen, category, onAddCategory, onClose }: IAddProductModalProps) => {
+    const dispatcher = useAppDispatch();
+    
     const {
         register,
         handleSubmit,
@@ -54,11 +59,25 @@ export const AddProductModal = ({ isOpen, category, onAddCategory, onClose }: IA
         const newProduct: TAddProductParams = {
             name: data.name,
             price: data.price,
-            categoryId: category ? category.id : "unknown",
+            categoryId: category ? category.id : null,
+            photo: data.photo,
+            desc: data.desc,
+            oldPrice: data.oldPrice,
         }
-        addProductApi(newProduct);
+        dispatcher(productAdd(newProduct))
+
         onClose();
     }
+
+    const handleChangePhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const [file] = e.target.files;
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await axiosInstance.post('/upload', formData);
+        return response.data.url;
+    };
+
 
     return (
         <>
@@ -73,7 +92,11 @@ export const AddProductModal = ({ isOpen, category, onAddCategory, onClose }: IA
                     {errors.name && <p className={s.red}>{errors.name.message}</p>}
 
                     <LabelWrapper title={"Фото"} required={true}>
-                        <input {...register("photo")} />
+                        <input type="file" onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            handleChangePhoto(e).then((url) => {
+                                setValue("photo", url);
+                            });
+                        }} />
                     </LabelWrapper>
                     {errors.photo && <p className={s.red}>{errors.photo.message}</p>}
 

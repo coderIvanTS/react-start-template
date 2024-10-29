@@ -2,9 +2,9 @@ import { put } from "redux-saga/effects";
 import { isTErrorResponse, TServerError } from "../../../shared/fetchHelpers/typeGuards";
 import { createAction } from "@reduxjs/toolkit";
 import { UNKNOWN_ERROR_MESSAGE } from "./constant";
-import { Product, Sorting, TProductRaw } from "../../../entities/ViewProductList/model/types/types";
+import { Product, Sorting } from "../../../entities/ViewProductList/model/types/types";
 import { getProductsApi } from "../../../entities/ViewProductList/api/request";
-import { addProductsToList, addToProductList, setError, setIsLoading } from "../productSlice";
+import { addProductsToList, setError, setIsLoading } from "../productSlice";
 import { RawProductDto, TProductGetRaw } from "../../../entities/ViewProductList/model/types/productTypes";
 
 export type TGetProductSagaProps = {
@@ -12,7 +12,6 @@ export type TGetProductSagaProps = {
     pageNumber: number;
     sorting: Sorting;
 }
-
 
 // Saga Effects. get product
 export function* getProductSaga(data: { type: string, payload: TGetProductSagaProps }): any {

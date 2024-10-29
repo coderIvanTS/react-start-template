@@ -19,7 +19,6 @@ const productInCartSlice = createSlice(
         initialState,
         reducers: {
             addToCart(state, action: PayloadAction<TProductInCartWithCount>) {
-                //let found = state.productList.find(p => p.id == action.payload.id);
                 let found = false;
                 state.productList.forEach(p => {
                     if (p.id == action.payload.id) {

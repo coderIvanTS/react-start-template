@@ -7,12 +7,13 @@ import { addToCart, dellFromCart, getCountInCartById, TProductInCartWithCount } 
 import { useAppSelector } from "../../store/hooks";
 import { useForm } from "react-hook-form";
 import { Product, TUpdateProductParams } from "../ViewProductList/model/types/types";
+import { productDelete } from "../../store/slices/saga/deleteProductSaga";
 
 export interface IViewProductProps {
     product: Product;
     isLast: boolean;
     isEditMode: boolean;
-    onSaveChanges: (product: TUpdateProductParams) => void;
+    onSaveChanges: (product: Product) => void;
     nextPage: () => void;
 }
 
@@ -25,7 +26,7 @@ export const ViewProduct: FC<IViewProductProps> = ({ product, isLast, isEditMode
     const containerRef = useRef();
     const [isGroupOpen, setIsGroupOpen] = useState(false);
 
-    const { register, handleSubmit } = useForm({
+    const { register, handleSubmit } = useForm<Product>({
         defaultValues: { ...product }
     });
 
@@ -43,19 +44,13 @@ export const ViewProduct: FC<IViewProductProps> = ({ product, isLast, isEditMode
         }
     }, [containerRef]);
 
+    const handleDelete = () => {
+        dispatch(productDelete(product.id));
+    }
+
     return (
         <form onSubmit={handleSubmit((data) => {
-
-            const updateProduct : TUpdateProductParams = {
-                id: data.id,
-                name: data.name,
-                createdAt: data.createdAt,
-                updatedAt: data.updatedAt,
-                price: data.price,
-                commandId: data.commandId,
-                categoryId: data.category.id
-            }
-            onSaveChanges(updateProduct);
+            onSaveChanges(data);
         })
         }
         >
@@ -99,7 +94,10 @@ export const ViewProduct: FC<IViewProductProps> = ({ product, isLast, isEditMode
                 </GroupCollapse>
 
                 {isEditMode ?
-                    <button type="submit" >Сохранить изменения</button>
+                    <>
+                        <button type="submit" >Сохранить изменения</button>
+                        <button type="button" onClick={handleDelete}>Удалить</button>
+                    </>
                     :
                     <div className={s.addToCartButton}>
                         <AddToCart

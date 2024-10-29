@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Product, Sorting } from "../../entities/ViewProductList/model/types/types";
+import { Product, Sorting, TUpdateProductParams } from "../../entities/ViewProductList/model/types/types";
 
 type TError = {
     isError: boolean;
@@ -45,14 +45,23 @@ const productSlice = createSlice(
         name: 'product',
         initialState,
         reducers: {
-            addToProductList(state, action: PayloadAction<Product>) {
-                state.productList.push(action.payload);
+            addToTopOfProductList(state, action: PayloadAction<Product>) {
+                state.productList.unshift(action.payload);
             },
             addProductsToList(state, action: PayloadAction<Product[]>) {
                 state.productList.push(...action.payload);
             },
             cleanProductList(state) {
                 state.productList = [];
+            },
+            updateProductList(state, action: PayloadAction<Product>) {
+                const foundIndex = state.productList.findIndex(p => p.id == action.payload.id);
+                if (foundIndex != -1) {
+                    state.productList[foundIndex] = action.payload;
+                };
+            },
+            deleteProduct(state, action: PayloadAction<string>) {
+                state.productList = state.productList.filter(p => p.id != action.payload);
             },
             setCurrentPage(state, action: PayloadAction<number>) {
                 state.pagination.currentPage = action.payload;
@@ -70,4 +79,5 @@ const productSlice = createSlice(
 
 export default productSlice.reducer;
 
-export const { addToProductList, addProductsToList, cleanProductList, setCurrentPage, setIsLoading, setError } = productSlice.actions;
+export const { addToTopOfProductList, addProductsToList, cleanProductList, deleteProduct,
+    updateProductList, setCurrentPage, setIsLoading, setError } = productSlice.actions;

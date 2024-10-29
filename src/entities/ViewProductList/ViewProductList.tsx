@@ -3,10 +3,11 @@ import { ViewProduct } from "../ViewProduct/ViewProduct";
 import s from './ViewProductList.module.sass';
 import { putProductApi } from "./api/request";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { Category, TUpdateProductParams } from "./model/types/types";
+import { Category, Product, TUpdateProductParams } from "./model/types/types";
 import { AddProductModal } from "./ui/AddProductModal/AddProductModal";
 import { CategoryModal } from "./ui/CategoryModal";
 import { productGet } from "../../store/slices/saga/getProductSaga";
+import { productUpdate } from "../../store/slices/saga/updateProductSaga";
 
 interface IViewProductListProps {
     isEditMode: boolean;
@@ -55,8 +56,8 @@ export const ViewProductList = ({ isEditMode }: IViewProductListProps) => {
         setIsOpenAddProductModal(true);
     }
 
-    const handleSaveChanges = (product: TUpdateProductParams) => {
-        putProductApi(product)
+    const handleSaveChanges = (product: Product) => {
+        dispatcher(productUpdate(product));
     }
 
     return (
@@ -68,7 +69,7 @@ export const ViewProductList = ({ isEditMode }: IViewProductListProps) => {
                 </button>
             }
             {
-                productList.map((p, index) => 
+                productList.map((p, index) =>
                     <ViewProduct
                         product={p}
                         key={p.id + index}
