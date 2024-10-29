@@ -90,7 +90,14 @@ export const ViewProductList = ({ isEditMode }: IViewProductListProps) => {
                     setIsOpenAddCategoryModal(true)
                 }}
                 onClose={() => {
-                    setIsOpenAddProductModal(false)
+                    dispatcher(productGet(
+                        {
+                            pageSize: pagination.maxOnPage,
+                            pageNumber: pagination.currentPage,
+                            sorting: pagination.sort,
+                        }
+                    ));
+                    setIsOpenAddProductModal(false);
                 }}
             />
 

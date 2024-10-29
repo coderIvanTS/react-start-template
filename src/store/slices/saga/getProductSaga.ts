@@ -15,6 +15,7 @@ export type TGetProductSagaProps = {
 
 // Saga Effects. get product
 export function* getProductSaga(data: { type: string, payload: TGetProductSagaProps }): any {
+    console.log('getProductSaga: ')
     try {
         yield put(setError({ isError: false, errorMessage: "" }));
         yield put(setIsLoading(true));

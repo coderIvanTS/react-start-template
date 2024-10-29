@@ -8,12 +8,14 @@ import { z } from 'zod';
 import s from './AddProductModal.modal.sass';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axiosInstance from "../../../../shared/axiosHelper/axiosHelper";
-import { useAppDispatch } from "../../../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
 import { productAdd } from "../../../../store/slices/saga/addProductSaga";
+import { useNavigate } from "react-router-dom";
+import { productGet } from "../../../../store/slices/saga/getProductSaga";
 
 const schema = z.object({
     name: z.string().min(3, { message: 'Минимальная длина имени товара 3 символа' }),
-    photo: z.string().nullable(),
+    photo: z.string({ message: 'Укажите фотографию' }),
     desc: z.string().nullable(),
     oldPrice: z.preprocess((p) => {
         const res = p === '' ? undefined : Number(p);
@@ -32,7 +34,7 @@ export interface IAddProductModalProps {
 
 export const AddProductModal = ({ isOpen, category, onAddCategory, onClose }: IAddProductModalProps) => {
     const dispatcher = useAppDispatch();
-    
+
     const {
         register,
         handleSubmit,
@@ -55,7 +57,7 @@ export const AddProductModal = ({ isOpen, category, onAddCategory, onClose }: IA
         }
     }, [category]);
 
-    const onSubmit: SubmitHandler<TAddProductParams> = (data) => {
+    const onSubmit: SubmitHandler<TAddProductParams> = async (data) => {
         const newProduct: TAddProductParams = {
             name: data.name,
             price: data.price,
@@ -64,7 +66,7 @@ export const AddProductModal = ({ isOpen, category, onAddCategory, onClose }: IA
             desc: data.desc,
             oldPrice: data.oldPrice,
         }
-        dispatcher(productAdd(newProduct))
+        await dispatcher(productAdd(newProduct));
 
         onClose();
     }

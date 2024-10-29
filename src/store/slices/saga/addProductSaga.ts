@@ -5,14 +5,13 @@ import { UNKNOWN_ERROR_MESSAGE } from "./constant";
 import { Category, Product, TAddProductParams, TUpdateProductParams } from "../../../entities/ViewProductList/model/types/types";
 import { addProductApi, putProductApi } from "../../../entities/ViewProductList/api/request";
 import { setError, cleanProductList } from "../productSlice";
-import { productGet } from "./getProductSaga";
+import { getProductSaga, productGet } from "./getProductSaga";
 
 // Saga Effects. Add product
 export function* addProductSaga(data: { type: string, payload: TAddProductParams }): any {
     try {
         yield addProductApi(data.payload);
-        yield put(cleanProductList())
-        yield call(productGet, { pageSize: 10, pageNumber: 1, sorting: { type: 'ASC', field: 'id' } });
+
     } catch (error: unknown) {
         if (isTErrorResponse(error)) {
             let allErrors = "";

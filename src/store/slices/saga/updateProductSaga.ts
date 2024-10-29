@@ -9,7 +9,6 @@ import { setError, updateProductList } from "../productSlice";
 // Saga Effects. Update product
 export function* updateProductSaga(data: { type: string, payload: Product }): any {
     try {
-
         const updateProduct: TUpdateProductParams = {
             id: data.payload.id,
             name: data.payload.name,
@@ -18,6 +17,9 @@ export function* updateProductSaga(data: { type: string, payload: Product }): an
             price: data.payload.price,
             categoryId: data.payload.category.id,
             commandId: data.payload.commandId,
+            photo: data.payload.photo,
+            desc: data.payload.desc,
+            oldPrice: data.payload.oldPrice,
         }
 
         yield putProductApi(updateProduct);
