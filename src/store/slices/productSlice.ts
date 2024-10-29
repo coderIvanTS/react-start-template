@@ -49,7 +49,7 @@ const productSlice = createSlice(
                 state.productList.unshift(action.payload);
             },
             addProductsToList(state, action: PayloadAction<Product[]>) {
-                state.productList.push(...action.payload);
+                state.productList = action.payload;
             },
             cleanProductList(state) {
                 state.productList = [];
