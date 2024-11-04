@@ -1,4 +1,4 @@
-import { put } from "redux-saga/effects";
+import { call, put } from "redux-saga/effects";
 import { isTErrorResponse, TServerError } from "../../../shared/fetchHelpers/typeGuards";
 import { createAction } from "@reduxjs/toolkit";
 import { UNKNOWN_ERROR_MESSAGE } from "./constant";
@@ -8,8 +8,9 @@ import { deleteProduct, setError } from "../productSlice";
 // Saga Effects. Delete product
 export function* deleteProductSaga(data: { type: string, payload: string }): any {
     try {
-
-        yield deleteProductApi(data.payload);
+        console.log('deleteProductSaga ' + data.payload);
+        
+        yield call(deleteProductApi, data.payload);
         yield put(deleteProduct(data.payload));
     } catch (error: unknown) {
         if (isTErrorResponse(error)) {
@@ -23,5 +24,5 @@ export function* deleteProductSaga(data: { type: string, payload: string }): any
     }
 }
 
-export const PRODUCT_DELETE = 'product/deleteProduct';
+export const PRODUCT_DELETE = 'product/productDeleteSaga';
 export const productDelete = createAction<string>(PRODUCT_DELETE);

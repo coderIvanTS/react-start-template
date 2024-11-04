@@ -7,6 +7,7 @@ import { COMAND_ID } from "../../../shared/fetchHelpers/fetchSettings";
 import { isTErrorResponse, TServerError } from "../../../shared/fetchHelpers/typeGuards";
 import { createAction } from "@reduxjs/toolkit";
 import { UNKNOWN_ERROR_MESSAGE } from "./constant";
+import { LOCAL_STORAGE_TOKEN } from "./constants";
 
 // Saga Effects
 export function* doProfileRegisterSaga(data: { type: string, payload: { isNewUser: boolean, email: string, password: string } }): any {
@@ -22,6 +23,7 @@ export function* doProfileRegisterSaga(data: { type: string, payload: { isNewUse
         }
 
         if (isTRegisterProfile(response)) {
+            localStorage.setItem(LOCAL_STORAGE_TOKEN, response.token);
             yield put(saveToken(response.token));
             // Получаем данные профиля
             const profile = yield getProfileApi();
@@ -33,7 +35,7 @@ export function* doProfileRegisterSaga(data: { type: string, payload: { isNewUse
                 yield put(saveProfile(newProfile));
             }
         } else {
-            throw (new Error (UNKNOWN_ERROR_MESSAGE));
+            throw (new Error(UNKNOWN_ERROR_MESSAGE));
         }
 
     } catch (error: unknown) {

@@ -1,26 +1,21 @@
-import { put } from "redux-saga/effects";
+import { put, select } from "redux-saga/effects";
 import { isTErrorResponse, TServerError } from "../../../shared/fetchHelpers/typeGuards";
 import { createAction } from "@reduxjs/toolkit";
 import { UNKNOWN_ERROR_MESSAGE } from "./constant";
 import { Product, Sorting } from "../../../entities/ViewProductList/model/types/types";
 import { getProductsApi } from "../../../entities/ViewProductList/api/request";
-import { addProductsToList, setError, setIsLoading } from "../productSlice";
+import productSlice, { addProductsToList, setError, setIsLoading } from "../productSlice";
 import { RawProductDto, TProductGetRaw } from "../../../entities/ViewProductList/model/types/productTypes";
-
-export type TGetProductSagaProps = {
-    pageSize: number;
-    pageNumber: number;
-    sorting: Sorting;
-}
+import * as selectors from '../productSlice';
+import { MAX_ON_PAGE } from "./constants";
 
 // Saga Effects. get product
-export function* getProductSaga(data: { type: string, payload: TGetProductSagaProps }): any {
+export function* refreshProductListSaga(): any {
     try {
         yield put(setError({ isError: false, errorMessage: "" }));
         yield put(setIsLoading(true));
 
-        const response = yield getProductsApi(data.payload.pageSize,
-            data.payload.pageNumber, data.payload.sorting);
+        const response = yield getProductsApi(MAX_ON_PAGE, 1, { type: 'ASC', field: 'id' });
         const product: Product[] = response.data.map((d: TProductGetRaw) => new RawProductDto(d))
         yield put(addProductsToList(product))
 
@@ -38,5 +33,5 @@ export function* getProductSaga(data: { type: string, payload: TGetProductSagaPr
     }
 }
 
-export const PRODUCT_GET = 'product/getProduct';
-export const productGet = createAction<TGetProductSagaProps>(PRODUCT_GET);
+export const PRODUCT_REFRESH = 'product/refreshProduct';
+export const productRefresh = createAction(PRODUCT_REFRESH);

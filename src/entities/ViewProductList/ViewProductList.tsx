@@ -8,6 +8,7 @@ import { AddProductModal } from "./ui/AddProductModal/AddProductModal";
 import { CategoryModal } from "./ui/CategoryModal";
 import { productGet } from "../../store/slices/saga/getProductSaga";
 import { productUpdate } from "../../store/slices/saga/updateProductSaga";
+import { productRefresh } from "../../store/slices/saga/refreshProductListSaga";
 
 interface IViewProductListProps {
     isEditMode: boolean;
@@ -90,14 +91,10 @@ export const ViewProductList = ({ isEditMode }: IViewProductListProps) => {
                     setIsOpenAddCategoryModal(true)
                 }}
                 onClose={() => {
-                    dispatcher(productGet(
-                        {
-                            pageSize: pagination.maxOnPage,
-                            pageNumber: pagination.currentPage,
-                            sorting: pagination.sort,
-                        }
-                    ));
                     setIsOpenAddProductModal(false);
+                }}
+                onSuccessAddProduct={() => {
+                    setIsOpenAddProductModal(false); 
                 }}
             />
 

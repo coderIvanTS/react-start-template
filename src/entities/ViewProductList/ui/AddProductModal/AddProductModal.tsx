@@ -1,7 +1,7 @@
-import React, { useEffect } from "react"
+import React, { LegacyRef, useEffect, useRef, useState } from "react"
 import { Modal } from "../../../../shared/Modal"
 import { addProductApi } from "../../api/request";
-import { Category, TAddProductParams } from "../../model/types/types";
+import { Category, TAddProductFormParams, TAddProductParams } from "../../model/types/types";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { LabelWrapper } from "../../../../shared/LabelWrapper";
 import { z } from 'zod';
@@ -13,15 +13,27 @@ import { productAdd } from "../../../../store/slices/saga/addProductSaga";
 import { useNavigate } from "react-router-dom";
 import { productGet } from "../../../../store/slices/saga/getProductSaga";
 
+//productImage: z.instanceof(FileList),
+// .refine(
+//     (file) =>
+//         [
+//             "image/png",
+//             "image/jpeg",
+//             "image/svg",
+//         ].includes(file.type),
+//     { message: "Укажите фотографию" }
+// ),
+
+// transform((fileList) => fileList[0])
 const schema = z.object({
     name: z.string().min(3, { message: 'Минимальная длина имени товара 3 символа' }),
-    photo: z.string({ message: 'Укажите фотографию' }),
     desc: z.string().nullable(),
     oldPrice: z.preprocess((p) => {
         const res = p === '' ? undefined : Number(p);
         return res;
     }, z.number().optional()),
-    price: z.preprocess((a) => parseInt(z.string().parse(a), 10), z.number().positive({ message: 'Укажите стоимость товара' })),
+    price: z.preprocess((a) => parseInt(z.string().parse(a), 10),
+        z.number().positive({ message: 'Укажите стоимость товара' })),
     categoryId: z.string({ message: 'Обязательно для заполнения' }),
 });
 
@@ -29,24 +41,30 @@ export interface IAddProductModalProps {
     isOpen: boolean;
     category?: Category,
     onAddCategory: () => void;
+    onSuccessAddProduct: () => void;
     onClose: () => void;
 }
 
-export const AddProductModal = ({ isOpen, category, onAddCategory, onClose }: IAddProductModalProps) => {
+export const AddProductModal = ({ isOpen, category, onAddCategory, onSuccessAddProduct, onClose }: IAddProductModalProps) => {
     const dispatcher = useAppDispatch();
+    const hiddenInputRef = useRef<HTMLInputElement>();
+    const [preview, setPreview] = useState("");
+    const [lastPhotoSelected, setLastPhotoSelected] = useState<File>();
 
     const {
         register,
         handleSubmit,
-        watch,
         setValue,
+        setError,
+        clearErrors,
+        reset,
         formState: { errors },
 
-    } = useForm<TAddProductParams>({
+    } = useForm<TAddProductFormParams>({
         resolver: zodResolver(schema),
         defaultValues: {
-            name: "Имя продукта",
-            price: 0,
+            name: "",
+            price: "0",
         },
     }
     );
@@ -54,38 +72,57 @@ export const AddProductModal = ({ isOpen, category, onAddCategory, onClose }: IA
     useEffect(() => {
         if (category && category.id) {
             setValue('categoryId', category.id);
+            clearErrors('categoryId');
         }
     }, [category]);
 
-    const onSubmit: SubmitHandler<TAddProductParams> = async (data) => {
-        const newProduct: TAddProductParams = {
+    const { ref: registerRef, ...rest } = register("productImage");
+
+    const handleUploadedFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+            const file = event.target.files[0];
+            setLastPhotoSelected(file);
+
+            const urlImage = URL.createObjectURL(file);
+            setPreview(urlImage);
+        }
+    };
+
+    // Кнопка выбора изображения
+    const handleUploadImageButton = () => {
+        if (hiddenInputRef.current && hiddenInputRef.current) {
+            hiddenInputRef.current.click();
+        }
+    }
+
+    const onSubmit: SubmitHandler<TAddProductFormParams> = async (data) => {
+        console.log('onSubmit');
+
+        if (lastPhotoSelected == undefined) {
+            setError("productImage", { type: 'custom', message: "Загрузите фотографию" });
+            return;
+        }
+
+        const newProduct: TAddProductFormParams = {
             name: data.name,
             price: data.price,
-            categoryId: category ? category.id : null,
-            photo: data.photo,
+            categoryId: category.id,
+            productImage: lastPhotoSelected,
             desc: data.desc,
             oldPrice: data.oldPrice,
         }
         await dispatcher(productAdd(newProduct));
 
-        onClose();
+        setPreview("");
+        setLastPhotoSelected(undefined);
+        reset();
+        onSuccessAddProduct();
     }
-
-    const handleChangePhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const [file] = e.target.files;
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const response = await axiosInstance.post('/upload', formData);
-        return response.data.url;
-    };
-
 
     return (
         <>
             {/* Модальное окно */}
             <Modal isOpen={isOpen} onClose={onClose}>
-
                 <form onSubmit={handleSubmit(onSubmit)}>
 
                     <LabelWrapper title={"Имя"} required={true}>
@@ -93,14 +130,29 @@ export const AddProductModal = ({ isOpen, category, onAddCategory, onClose }: IA
                     </LabelWrapper>
                     {errors.name && <p className={s.red}>{errors.name.message}</p>}
 
-                    <LabelWrapper title={"Фото"} required={true}>
-                        <input type="file" onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            handleChangePhoto(e).then((url) => {
-                                setValue("photo", url);
-                            });
-                        }} />
-                    </LabelWrapper>
-                    {errors.photo && <p className={s.red}>{errors.photo.message}</p>}
+
+                    <input className={s.hidden} type="file"
+                        name="productImage"
+                        {...rest}
+                        onChange={handleUploadedFile}
+                        accept="image/png, image/jpeg"
+                        ref={(e: any) => {
+                            registerRef(e);
+                            if (e && e != undefined) {
+                                hiddenInputRef.current = e;
+                            }
+                        }}
+                    />
+                    {errors.productImage && <p className={s.red}>{errors.productImage.message}</p>}
+
+                    {preview &&
+                        <img className={s.imagePreview} src={preview} />
+                    }
+
+                    <button type="button" onClick={handleUploadImageButton} >
+                        {'Загрузить фотографию'}
+                    </button>
+
 
                     <LabelWrapper title={"Стоимость"} required={true}>
                         <input {...register("price")} />

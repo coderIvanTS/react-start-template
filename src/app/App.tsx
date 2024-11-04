@@ -12,11 +12,11 @@ import '../shared/ThemeProvider/ThemeProvider.css';
 import { LoginPage } from '../pages/LoginPage';
 import { RoutePrivate } from '../shared/RoutePrivate/RoutePrivate';
 import { useDispatch } from 'react-redux';
-import { appInitiated } from '../store/slices/authAndProfile';
 import { RoutePrivateAdmin } from '../shared/RoutePrivateAdmin/RoutePrivateAdmin';
 import { AdminEditProductPage } from '../pages/AdminEditProductPage/AdminEditProductPage';
 import { AccessDeniedPage } from '../pages/AccessDeniedPage/AccessDeniedPage';
 import { RegisterSagaPage } from '../pages/RegisterSagaPage/RegisterSagaPage';
+import { appInitiated } from '../store/slices/saga/appInitiateSaga';
 
 function App() {
   const dispatch = useDispatch();

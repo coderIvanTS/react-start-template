@@ -1,5 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TProfile } from "../../shared/profileTypes/profileTypes";
+import { jwtDecode } from "jwt-decode";
+import { date } from "zod";
+
+
 
 type TAppStarted = {
     isAppInitiated: boolean;
@@ -51,12 +55,11 @@ const authAndProfileSlice = createSlice(
         name: 'authAndProfile',
         initialState,
         reducers: {
-            appInitiated(state) {
+            setAppInitiated(state) {
                 state.appStatus.isAppInitiated = true;
             },
             saveToken(state, action: PayloadAction<string>) {
                 state.auth.token = action.payload;
-                localStorage.setItem('auth_token', action.payload);
             },
             saveProfile(state, action: PayloadAction<TProfile>) {
                 state.profile = { ...action.payload }
@@ -83,5 +86,5 @@ const authAndProfileSlice = createSlice(
 )
 
 export default authAndProfileSlice.reducer;
-export const { appInitiated, saveToken, saveProfile, logOut, setIsLoading, setError } = authAndProfileSlice.actions;
+export const { setAppInitiated, saveToken, saveProfile, logOut, setIsLoading, setError } = authAndProfileSlice.actions;
 

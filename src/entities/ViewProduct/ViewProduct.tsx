@@ -45,6 +45,7 @@ export const ViewProduct: FC<IViewProductProps> = ({ product, isLast, isEditMode
     }, [containerRef]);
 
     const handleDelete = () => {
+        console.log('delete component')
         dispatch(productDelete(product.id));
     }
 

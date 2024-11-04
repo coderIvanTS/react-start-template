@@ -33,14 +33,17 @@ const productInCartSlice = createSlice(
             },
             dellFromCart(state, action: PayloadAction<string>) {
                 state.productList = state.productList.filter(p => p.id != action.payload);
-            }
+            },
+            cleanCart(state){
+                state.productList = [];
+            },
         }
     }
 )
 
 export default productInCartSlice.reducer;
 
-export const { addToCart, dellFromCart } = productInCartSlice.actions;
+export const { addToCart, dellFromCart, cleanCart } = productInCartSlice.actions;
 
 export const getCountInCartById = (productListinCart: TProductInCartWithCount[], id: string) => {
     const found = productListinCart.find(p => p.id === id);

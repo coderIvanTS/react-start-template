@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Product, Sorting, TUpdateProductParams } from "../../entities/ViewProductList/model/types/types";
+import { MAX_ON_PAGE } from "./saga/constants";
 
 type TError = {
     isError: boolean;
@@ -31,7 +32,7 @@ export type TProductList = {
 const initialState: TProductList = {
     productList: [],
     pagination: {
-        maxOnPage: 10,
+        maxOnPage: MAX_ON_PAGE,
         sort: { type: 'ASC', field: 'id' },
         currentPage: 1,
     },
@@ -81,3 +82,5 @@ export default productSlice.reducer;
 
 export const { addToTopOfProductList, addProductsToList, cleanProductList, deleteProduct,
     updateProductList, setCurrentPage, setIsLoading, setError } = productSlice.actions;
+
+export const paginationSelector = (state: TProductList) => state.pagination;

@@ -38,7 +38,7 @@ export type TProductRaw = {
     sorting: Sorting,
 }
 
-// Добавление нового товара
+// Добавление нового товара (отправка на сервер)
 export interface TAddProductParams {
     name: string;
     photo?: string;
@@ -48,6 +48,15 @@ export interface TAddProductParams {
     categoryId: string;
 };
 
+// Добавление нового товара (Структура данных обрабатываемая формой)
+export interface TAddProductFormParams {
+    name: string;
+    productImage: File;
+    desc?: string;
+    oldPrice?: number;
+    price: string;
+    categoryId: string;
+};
 
 
 // Обновление существующего товара

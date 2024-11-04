@@ -40,6 +40,14 @@ export const getProductsApi = async (pageSize: number, pageNumber: number, sorti
   return response.data;
 }
 
+export const addPhotoApi = async (file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await axiosInstance.post('/upload', formData);
+  return { url: response.data.url };
+};
+
 export const addProductApi = async (param: TAddProductParams) => {
   const response = await axiosInstance.post('/products', param);
   return response;

@@ -8,6 +8,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
 import { useDispatch } from "react-redux";
 import { logOut } from "../../store/slices/authAndProfile";
+import { logOutAction } from "../../store/slices/saga/logOutSaga";
+import { cleanCart } from "../../store/slices/productInCartSlice";
 
 export const Header = () => {
     const dispatch = useDispatch();
@@ -24,7 +26,8 @@ export const Header = () => {
                         {`Добро пожаловать: ${email}`}
                         <button type="button"
                             onClick={() => {
-                                dispatch(logOut());
+                                dispatch(cleanCart());
+                                dispatch(logOutAction());
                                 navigate('/');
                             }}
                         >{'Выйти'}</button>

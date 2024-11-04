@@ -13,8 +13,9 @@ export const LoginPage = () => {
     const error = useAppSelector(state => state.authAndProfile.error);
     const dispatcher = useAppDispatch();
     const navigate = useNavigate();
+
     const { register, handleSubmit, formState: { errors } } = useForm<TLoginInfo>({
-        defaultValues: { email: "", password: "" },
+        defaultValues: { email: "", password: ""},
         resolver: zodResolver(emailPasswordSchema),
     });
 

@@ -6,7 +6,8 @@ import { dellFromCart } from "../../store/slices/productInCartSlice"
 import { useAppSelector } from "../../store/hooks"
 
 export const CartPage = () => {
-    const productInCart = useAppSelector(state => state.productInCartSlice.productList)
+    const token = useAppSelector(state => state.authAndProfile.auth.token);
+    const productInCart = useAppSelector(state => state.productInCartSlice.productList);
     const dispatch = useDispatch();
 
     const handleOnDeleteFromCart = (id: string) => {
